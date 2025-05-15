@@ -39,7 +39,6 @@ const HomePage = () => {
           View My Files
         </button>
       </motion.div>
-      <Dock />
     </div>
   );
 };

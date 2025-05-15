@@ -10,6 +10,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/authSlice";
 
 const icons = [
   { name: "Home", icon: House, path: "/home" },
@@ -21,6 +23,7 @@ const icons = [
 
 const Dock = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = (path) => {
     console.log(`Navigating to ${path}`);
@@ -40,6 +43,7 @@ const Dock = () => {
     if (response.data.success) {
       navigate("/login");
       toast.success(response.data.message);
+      dispatch(setAuthUser(null));
     }
   };
 

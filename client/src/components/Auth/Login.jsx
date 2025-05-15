@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/authSlice";
 
 const Login = () => {
   const {
@@ -15,6 +17,7 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -33,6 +36,7 @@ const Login = () => {
       if (response.data.success) {
         navigate("/home");
         toast.success(response.data.message);
+        dispatch(setAuthUser(response.data.user))
       }
     } catch (error) {
       toast.error(error.response.data.message);
