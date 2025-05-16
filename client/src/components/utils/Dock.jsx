@@ -1,12 +1,13 @@
 import React from "react";
 import {
-  House,
+  Home,
   UserCircle,
   Briefcase,
-  ChatCircleDots,
-  Gear,
-  SignOut,
-} from "phosphor-react";
+  MessagesSquare,
+  Settings,
+  LogOut,
+} from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -14,12 +15,13 @@ import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
 
 const icons = [
-  { name: "Home", icon: House, path: "/home" },
+  { name: "Home", icon: Home, path: "/home" },
   { name: "Profile", icon: UserCircle, path: "/profile" },
   { name: "Projects", icon: Briefcase, path: "/projects" },
-  { name: "Messages", icon: ChatCircleDots, path: "/messages" },
-  { name: "Settings", icon: Gear, path: "/settings" },
+  { name: "Messages", icon: MessagesSquare, path: "/messages" },
+  { name: "Settings", icon: Settings, path: "/settings" },
 ];
+
 
 const Dock = () => {
   const navigate = useNavigate();
@@ -73,9 +75,9 @@ const Dock = () => {
         </div>
         <button
           onClick={handleLogout}
-          className="text-red-500 p-2 rounded-full border border-red-500 hover:scale-125 transition-transform duration-300"
+          className="text-red-500 p-2  rounded-full border border-red-500 hover:scale-125 transition-transform duration-300"
         >
-          <SignOut size={28} weight="duotone" />
+          <LogOut size={28} strokeWidth={1.8} />
         </button>
       </div>
     </div>
