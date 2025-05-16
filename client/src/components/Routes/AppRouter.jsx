@@ -3,6 +3,7 @@ import LandingPage from "../Pages/LandingPage";
 import Login from "../Auth/Login";
 import Register from "../Auth/Register";
 import HomePage from "../Pages/HomePage";
+import ProfilePage from "../Pages/ProfilePage";
 
 const AppRoutes = () => (
   <Routes>
@@ -10,6 +11,7 @@ const AppRoutes = () => (
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/home" element={<HomePage />} />
+    <Route path="/profile" element={<ProfilePage />} />
   </Routes>
 );
 

@@ -16,10 +16,9 @@ import { setAuthUser } from "@/redux/authSlice";
 
 const icons = [
   { name: "Home", icon: Home, path: "/home" },
-  { name: "Profile", icon: UserCircle, path: "/profile" },
   { name: "Projects", icon: Briefcase, path: "/projects" },
   { name: "Messages", icon: MessagesSquare, path: "/messages" },
-  { name: "Settings", icon: Settings, path: "/settings" },
+  { name: "Profile", icon: UserCircle, path: "/profile" },
 ];
 
 
