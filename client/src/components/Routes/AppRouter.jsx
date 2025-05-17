@@ -8,6 +8,7 @@ import ApplyLeavePage from "../Pages/ApplyLeavePage";
 import StatusPage from "../Pages/StatusPage";
 import AcceptReject from "../Pages/AcceptReject";
 import EmployeeStatusPage from "../Pages/EmployeeStatusPage";
+import HappyHour from "../Pages/HappyHour";
 
 const AppRoutes = () => (
   <Routes>
@@ -20,6 +21,7 @@ const AppRoutes = () => (
     <Route path="/status" element={<StatusPage />} />
     <Route path="/accept-reject" element={<AcceptReject />} />
     <Route path="/employee-status" element={<EmployeeStatusPage />} />
+    <Route path="/happy-hour" element={<HappyHour />} />
   </Routes>
 );
 

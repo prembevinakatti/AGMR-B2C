@@ -9,6 +9,7 @@ import {
   ThumbsDown,
 } from "lucide-react";
 import { FaRegAddressCard } from "react-icons/fa";
+import { FaRegShareSquare } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -26,6 +27,7 @@ const Dock = () => {
     { name: "Home", icon: Home, path: "/home" },
     { name: "Apply Leave", icon: Briefcase, path: "/apply-leave" },
     { name: "Profile", icon: UserCircle, path: "/profile" },
+    { name: "Happy Hour", icon: FaRegShareSquare , path: "/happy-hour" },
   ];
 
   const managerExtras = [
