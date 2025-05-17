@@ -9,6 +9,10 @@ const leaveRequestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Auth",
   },
+  leaveId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Leave",
+  },
   status: {
     type: String,
     required: true,

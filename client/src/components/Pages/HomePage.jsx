@@ -61,7 +61,7 @@ const HomePage = () => {
             <button className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg">
               Review Leave Requests
             </button>
-            <button className="px-8 py-3 border border-yellow-500 text-yellow-400 rounded-xl font-bold hover:bg-yellow-500 hover:text-white transition-all shadow-md">
+            <button onClick={() => navigate("/status")} className="px-8 py-3 border border-yellow-500 text-yellow-400 rounded-xl font-bold hover:bg-yellow-500 hover:text-white transition-all shadow-md">
               View Team Leaves
             </button>
           </>

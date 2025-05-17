@@ -1,4 +1,4 @@
-const leaveRequestModel = require("../models/leaveReuqest.model");
+const leaveReuqestModel = require("../models/leaveReuqest.model");
 const transporter = require("../services/emailServices");
 
 module.exports.getPendingRequests = async (req, res) => {
@@ -9,14 +9,12 @@ module.exports.getPendingRequests = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    console.log("userId : ", userId);
-
-    const pendingRequests = await leaveRequestModel
+    const pendingRequests = await leaveReuqestModel
       .find({
         mgrId: userId,
         status: "Pending",
       })
-      .populate("empId");
+      .populate("empId leaveId");
 
     if (!pendingRequests || pendingRequests.length === 0) {
       return res.status(404).json({ message: "No Pending Requests Found" });
@@ -37,7 +35,6 @@ module.exports.getPendingRequests = async (req, res) => {
   }
 };
 
-
 module.exports.acceptORrejectRequest = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -54,7 +51,7 @@ module.exports.acceptORrejectRequest = async (req, res) => {
     }
 
     // Find leave request by ID and populate employee info
-    const leaveRequest = await leaveRequestModel
+    const leaveRequest = await leaveReuqestModel
       .findById(requestId)
       .populate("empId");
     if (!leaveRequest) {
@@ -70,11 +67,9 @@ module.exports.acceptORrejectRequest = async (req, res) => {
         : null;
 
     if (!newStatus) {
-      return res
-        .status(400)
-        .json({
-          message: "Invalid status value. Use 'approved' or 'rejected'.",
-        });
+      return res.status(400).json({
+        message: "Invalid status value. Use 'approved' or 'rejected'.",
+      });
     }
 
     leaveRequest.status = newStatus;
@@ -103,5 +98,99 @@ module.exports.acceptORrejectRequest = async (req, res) => {
   } catch (error) {
     console.error("Error accepting or rejecting request:", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports.getApprovedRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    console.log("userId : ", userId);
+
+    const pendingRequests = await leaveRequestModel
+      .find({
+        mgrId: userId,
+        status: "Approved",
+      })
+      .populate("empId");
+
+    if (!pendingRequests || pendingRequests.length === 0) {
+      return res.status(404).json({ message: "No Approved Requests Found" });
+    }
+
+    return res.status(200).json({
+      message: "Approved Requests Found",
+      success: true,
+      pendingRequests,
+    });
+  } catch (error) {
+    console.error("Error Getting Approved Requests:", error.message);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+module.exports.getRejectedRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    console.log("userId:", userId);
+
+    const rejectedRequests = await leaveRequestModel
+      .find({
+        mgrId: userId,
+        status: "Rejected",
+      })
+      .populate("empId");
+
+    if (!rejectedRequests || rejectedRequests.length === 0) {
+      return res.status(404).json({ message: "No Requests Found" });
+    }
+
+    return res.status(200).json({
+      message: "Rejected Requests Found",
+      success: true,
+      rejectedRequests,
+    });
+  } catch (error) {
+    console.error("Error Getting Rejected Requests:", error.message);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+module.exports.getAllRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const requests = await leaveReuqestModel.find().populate("empId leaveId");
+
+    if (!requests) {
+      return res.status(404).json({ message: "No Requests Found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Requests Found", success: true, requests: requests });
+  } catch (error) {
+    console.log("Error Getting All Requests:", error.message);
   }
 };

@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import useGetAllRequests from "@/hooks/useGetAllRequests";
 
-const mockData = [
-  { id: 1, name: 'Alice', status: 'Pending', date: '2025-05-10', reason: 'Medical' },
-  { id: 2, name: 'Bob', status: 'Approved', date: '2025-05-12', reason: 'Vacation' },
-  { id: 3, name: 'Charlie', status: 'Rejected', date: '2025-05-13', reason: 'Personal' },
-  { id: 4, name: 'David', status: 'Pending', date: '2025-05-15', reason: 'Family Event' },
-];
-
-const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
+const tabs = ["All", "Pending", "Approved", "Rejected"];
 
 const StatusPage = () => {
-  const [activeTab, setActiveTab] = useState('All');
+  const [activeTab, setActiveTab] = useState("All");
+  const allRequests = useGetAllRequests();
+
+  console.log("All Requests : ", allRequests);
 
   const filteredData =
-    activeTab === 'All'
-      ? mockData
-      : mockData.filter((item) => item.status === activeTab);
+    activeTab === "All"
+      ? allRequests
+      : allRequests.filter((item) => item.status === activeTab);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
@@ -32,8 +29,8 @@ const StatusPage = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 rounded-full font-semibold text-sm transition-all shadow-md border ${
               activeTab === tab
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-pink-400'
-                : 'bg-black text-gray-300 hover:bg-gray-800 border-gray-700'
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-pink-400"
+                : "bg-black text-gray-300 hover:bg-gray-800 border-gray-700"
             }`}
           >
             {tab}
@@ -54,7 +51,6 @@ const StatusPage = () => {
               <th className="p-3">ID</th>
               <th className="p-3">Name</th>
               <th className="p-3">Date</th>
-              <th className="p-3">Reason</th>
               <th className="p-3">Status</th>
             </tr>
           </thead>
@@ -62,21 +58,30 @@ const StatusPage = () => {
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
                 <tr
-                  key={item.id}
+                  key={item._id}
                   className="border-t border-gray-700 hover:bg-gray-800 transition"
                 >
-                  <td className="p-3">{item.id}</td>
-                  <td className="p-3">{item.name}</td>
-                  <td className="p-3">{item.date}</td>
-                  <td className="p-3">{item.reason}</td>
+                  <td className="p-3">{item.empId.empNo}</td>
+                  <td className="p-3">{item.empId.name}</td>
+                  <td className="p-3">
+                    {new Date(item.leaveId.fromDate).toLocaleDateString(
+                      "en-IN",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}
+                  </td>
+
                   <td className="p-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold shadow-md ${
-                        item.status === 'Approved'
-                          ? 'bg-green-500 text-black'
-                          : item.status === 'Rejected'
-                          ? 'bg-red-500 text-black'
-                          : 'bg-yellow-400 text-black'
+                        item.status === "Approved"
+                          ? "bg-green-500 text-black"
+                          : item.status === "Rejected"
+                          ? "bg-red-500 text-black"
+                          : "bg-yellow-400 text-black"
                       }`}
                     >
                       {item.status}

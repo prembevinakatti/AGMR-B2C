@@ -78,6 +78,7 @@ HR System
     const request = await leaveReuqestModel.create({
       mgrId: manager._id,
       empId: employee._id,
+      leaveId: leave._id,
       status: "Pending",
     });
 
