@@ -23,9 +23,28 @@ const authSchema = new mongoose.Schema(
       enum: ["Manager", "Employee"],
       required: true,
     },
-    numberOfLeaves: {
+    profession: {
+      type: String,
+      enum: ["Developer", "Testing", "HR", "Other"],
+      required: function () {
+        return this.role === "Employee";
+      },
+    },
+    CL: {
       type: Number,
       default: 21,
+    },
+    ML: {
+      type: Number,
+      default: 12,
+    },
+    EL: {
+      type: Number,
+      default: 7,
+    },
+    SL: {
+      type: Number,
+      default: 15,
     },
     department: {
       type: String,
@@ -38,15 +57,17 @@ const authSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Hash password before saving
 authSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
-    const salrtRounds = 10;
-    const salt = await bcrypt.genSalt(salrtRounds);
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    next(error);
   }
 });
 

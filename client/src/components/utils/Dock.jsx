@@ -4,27 +4,41 @@ import {
   UserCircle,
   Briefcase,
   MessagesSquare,
-  Settings,
   LogOut,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
+import { FaRegAddressCard } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
-
-// Updated icons array: Removed "Projects", added "Apply Leave"
-const icons = [
-  { name: "Home", icon: Home, path: "/home" },
-  { name: "Apply Leave", icon: Briefcase, path: "/apply-leave" },
-  { name: "Messages", icon: MessagesSquare, path: "/messages" },
-  { name: "Profile", icon: UserCircle, path: "/profile" },
-];
 
 const Dock = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { authUser } = useSelector((store) => store.auth);
+
+  // Set icon list conditionally based on role
+  const baseIcons = [
+    { name: "Home", icon: Home, path: "/home" },
+    { name: "Apply Leave", icon: Briefcase, path: "/apply-leave" },
+    { name: "Profile", icon: UserCircle, path: "/profile" },
+  ];
+
+  const managerExtras = [
+    { name: "Home", icon: Home, path: "/home" },
+    {
+      name: "Accept/Reject Requests",
+      icon: FaRegAddressCard,
+      path: "/accept-reject",
+    },
+    { name: "Profile", icon: UserCircle, path: "/profile" },
+  ];
+
+  const icons = authUser?.role === "Manager" ? [...managerExtras] : baseIcons;
 
   const handleClick = (path) => {
     console.log(`Navigating to ${path}`);
@@ -32,19 +46,23 @@ const Dock = () => {
   };
 
   const handleLogout = async () => {
-    const response = await axios.get(
-      `http://localhost:3000/api/agmr/auth/logout`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/agmr/auth/logout`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        navigate("/login");
+        toast.success(response.data.message);
+        dispatch(setAuthUser(null));
       }
-    );
-    if (response.data.success) {
-      navigate("/login");
-      toast.success(response.data.message);
-      dispatch(setAuthUser(null));
+    } catch (error) {
+      toast.error("Logout failed!");
     }
   };
 
@@ -62,7 +80,7 @@ const Dock = () => {
             onClick={() => handleClick(path)}
             className="text-white p-2 rounded-full border border-white hover:scale-125 transition-transform duration-300"
           >
-            <Icon size={28} weight="duotone" />
+            <Icon size={28} />
           </button>
         </div>
       ))}

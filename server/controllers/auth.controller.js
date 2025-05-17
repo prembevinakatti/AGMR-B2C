@@ -14,6 +14,7 @@ module.exports.register = async (req, res) => {
       department,
       empNo,
       mgrNo,
+      profession,
     } = req.body;
 
     // Validate required fields
@@ -45,11 +46,30 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    if (role === "Employee" && !empNo) {
-      return res.status(400).json({
-        success: false,
-        message: "Employee Number is required for Employee role",
-      });
+    if (role === "Employee") {
+      if (!empNo) {
+        return res.status(400).json({
+          success: false,
+          message: "Employee Number is required for Employee role",
+        });
+      }
+
+      if (!profession) {
+        return res.status(400).json({
+          success: false,
+          message: "Profession is required for Employee role",
+        });
+      }
+
+      const allowedProfessions = ["Developer", "Testing", "HR", "Other"];
+      if (!allowedProfessions.includes(profession)) {
+        return res.status(400).json({
+          success: false,
+          message: `Profession must be one of: ${allowedProfessions.join(
+            ", "
+          )}`,
+        });
+      }
     }
 
     const existingUser = await authModel.findOne({ email });
@@ -81,6 +101,7 @@ module.exports.register = async (req, res) => {
       department,
       empNo: role === "Employee" ? empNo : undefined,
       mgrNo: role === "Manager" ? mgrNo : undefined,
+      profession: role === "Employee" ? profession : undefined,
     });
 
     // 🧑‍💼 If Manager, create new department
@@ -117,6 +138,7 @@ module.exports.register = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        profession: newUser.profession || null,
       },
     });
   } catch (error) {

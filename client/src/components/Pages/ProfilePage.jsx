@@ -111,13 +111,40 @@ const ProfilePage = () => {
             <BadgeCheck className="w-4 h-4 text-purple-400" /> {user.role}
           </p>
           <p className="flex items-center gap-2 justify-center">
-            <span className="text-blue-400 font-medium">No Of Leaves:</span>{" "}
-            {user.numberOfLeaves ?? "N/A"}
-          </p>
-          <p className="flex items-center gap-2 justify-center">
             <span className="text-blue-400 font-medium">Department:</span>{" "}
             {user.department ?? "N/A"}
           </p>
+          {user.role === "Employee" && (
+            <p className="flex items-center gap-2 justify-center">
+              <span className="text-blue-400 font-medium">Profession:</span>{" "}
+              {user.profession ?? "N/A"}
+            </p>
+          )}
+
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col items-start">
+              <p className="flex items-center gap-2 justify-center">
+                <span className="text-blue-400 font-medium">Sick Leave:</span>{" "}
+                {user.SL ?? "N/A"}
+              </p>
+              <p className="flex items-center gap-2 justify-center">
+                <span className="text-blue-400 font-medium">Casual Leave:</span>{" "}
+                {user.CL ?? "N/A"}
+              </p>
+            </div>
+            <div className="flex flex-col items-start">
+              <p className="flex items-center gap-2 justify-center">
+                <span className="text-blue-400 font-medium">Earned Leave:</span>{" "}
+                {user.EL ?? "N/A"}
+              </p>
+              <p className="flex items-center gap-2 justify-center">
+                <span className="text-blue-400 font-medium">
+                  Maternity Leave:
+                </span>{" "}
+                {user.ML ?? "N/A"}
+              </p>
+            </div>{" "}
+          </div>
           {/* <p className="flex items-center gap-2 justify-center">
             <span className="text-blue-400 font-medium">Employee No:</span>{" "}
             {(user.empNo ?? "N/A") || (user.mgrNo ?? "N/A")}

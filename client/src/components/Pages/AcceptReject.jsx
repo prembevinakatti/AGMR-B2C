@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-
-const initialRequests = [
-  { id: 1, name: 'Alice', status: 'Pending', date: '2025-05-10', reason: 'Medical' },
-  { id: 2, name: 'Bob', status: 'Pending', date: '2025-05-12', reason: 'Vacation' },
-  { id: 3, name: 'Charlie', status: 'Pending', date: '2025-05-13', reason: 'Personal' },
-];
+import React from "react";
+import { motion } from "framer-motion";
+import useGetPendingRequests from "@/hooks/useGetPendingRequests";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AcceptReject = () => {
-  const [requests, setRequests] = useState(initialRequests);
+  const pendingRequests = useGetPendingRequests();
+  const navigate = useNavigate();
 
-  const handleAction = (id, action) => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.id === id ? { ...req, status: action } : req
-      )
-    );
+  const handleAction = async (id, action) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/agmr/emp/leave/acceptOrrejectRequest`,
+        { requestId: id, status: action },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        navigate("/status")
+        toast.success(response.data.message);
+      }
+      console.log("Action successful:", response.data);
+    } catch (error) {
+      console.error("Action failed:", error);
+    }
   };
 
   return (
@@ -33,33 +46,48 @@ const AcceptReject = () => {
         <table className="w-full bg-black bg-opacity-30 backdrop-blur-md border border-gray-700 rounded-lg shadow-lg">
           <thead>
             <tr className="text-left text-sm text-gray-300 border-b border-gray-600">
-              <th className="p-3">ID</th>
+              <th className="p-3">Emp No</th>
               <th className="p-3">Name</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Reason</th>
+              <th className="p-3">From Date</th>
+              <th className="p-3">To Date</th>
               <th className="p-3">Status</th>
               <th className="p-3 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {requests.length > 0 ? (
-              requests.map((item) => (
+            {pendingRequests.length > 0 ? (
+              pendingRequests.map((item) => (
                 <tr
-                  key={item.id}
+                  key={item._id}
                   className="border-t border-gray-700 hover:bg-gray-800 transition"
                 >
-                  <td className="p-3">{item.id}</td>
-                  <td className="p-3">{item.name}</td>
-                  <td className="p-3">{item.date}</td>
-                  <td className="p-3">{item.reason}</td>
+                  <td className="p-3">{item.empId?.empNo}</td>
+                  <td className="p-3">{item.empId?.name || "No Name"}</td>
+                  <td className="p-3">
+                    {new Date(item.leaveId.fromDate).toLocaleDateString(
+                      "en-IN",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}
+                  </td>
+                  <td className="p-3">
+                    {new Date(item.leaveId.toDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
                   <td className="p-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold shadow-md ${
-                        item.status === 'Approved'
-                          ? 'bg-green-500 text-black'
-                          : item.status === 'Rejected'
-                          ? 'bg-red-500 text-black'
-                          : 'bg-yellow-400 text-black'
+                        item.status === "Approved"
+                          ? "bg-green-500 text-black"
+                          : item.status === "Rejected"
+                          ? "bg-red-500 text-black"
+                          : "bg-yellow-400 text-black"
                       }`}
                     >
                       {item.status}
@@ -67,13 +95,13 @@ const AcceptReject = () => {
                   </td>
                   <td className="p-3 text-center space-x-2">
                     <button
-                      onClick={() => handleAction(item.id, 'Approved')}
+                      onClick={() => handleAction(item._id, "Approved")}
                       className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
                     >
                       Accept
                     </button>
                     <button
-                      onClick={() => handleAction(item.id, 'Rejected')}
+                      onClick={() => handleAction(item._id, "Rejected")}
                       className="bg-red-500 hover:bg-red-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
                     >
                       Reject

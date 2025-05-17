@@ -20,12 +20,14 @@ const Register = () => {
   const [departments, setDepartments] = useState([]);
   const role = watch("role");
 
-  // Fetch departments on component mount
+  // Fetch departments on mount
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/agmr/departments/getDepartNames");
-        setDepartments(res.data.departments || []); // assuming API returns { departments: [...] }
+        const res = await axios.get(
+          "http://localhost:3000/api/agmr/departments/getDepartNames"
+        );
+        setDepartments(res.data.departments || []);
       } catch (error) {
         console.error("Failed to fetch departments:", error);
       }
@@ -35,12 +37,12 @@ const Register = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    try {
-      if (!data.role) {
-        toast.error("Please select a role");
-        return;
-      }
+    if (!data.role) {
+      toast.error("Please select a role");
+      return;
+    }
 
+    try {
       setLoading(true);
       console.log("Data   : ", data);
 
@@ -52,10 +54,11 @@ const Register = () => {
           withCredentials: true,
         }
       );
+
       if (response.data.success) {
         toast.success(response.data.message);
-        navigate("/login");
         reset();
+        navigate("/login");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed.");
@@ -77,7 +80,6 @@ const Register = () => {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Other fields */}
           <InputField
             id="name"
             label="Full Name"
@@ -124,38 +126,38 @@ const Register = () => {
             }
           />
 
-          {/* Role Checkboxes */}
+          {/* Role Radio Buttons */}
           <div>
             <label className="block text-white text-sm font-semibold mb-2">
               Select Role
             </label>
             <div className="flex gap-6">
-              <label className="flex items-center gap-2 text-white font-medium">
+              <label className="flex items-center gap-2 text-white font-medium cursor-pointer">
                 <input
-                  type="checkbox"
+                  type="radio"
                   value="Manager"
+                  {...register("role", { required: "Role is required" })}
                   checked={role === "Manager"}
-                  onChange={() =>
-                    setValue("role", role === "Manager" ? "" : "Manager")
-                  }
+                  onChange={() => setValue("role", "Manager")}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                 />
                 Manager
               </label>
-              <label className="flex items-center gap-2 text-white font-medium">
+              <label className="flex items-center gap-2 text-white font-medium cursor-pointer">
                 <input
-                  type="checkbox"
+                  type="radio"
                   value="Employee"
+                  {...register("role", { required: "Role is required" })}
                   checked={role === "Employee"}
-                  onChange={() =>
-                    setValue("role", role === "Employee" ? "" : "Employee")
-                  }
+                  onChange={() => setValue("role", "Employee")}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                 />
                 Employee
               </label>
             </div>
-            
+            {errors.role && (
+              <p className="text-red-400 text-sm mt-1">{errors.role.message}</p>
+            )}
           </div>
 
           {/* Conditional Fields Based on Role */}
@@ -168,13 +170,41 @@ const Register = () => {
                 errors={errors}
                 required
               />
-              <InputField
-                id="department"
-                label="Department"
-                register={register}
-                errors={errors}
-                required
-              />
+              {/* Department dropdown for Manager */}
+              <div className="relative">
+                <label
+                  htmlFor="department"
+                  className="block mb-2 text-sm font-semibold text-white"
+                >
+                  Department
+                </label>
+                <select
+                  id="department"
+                  {...register("department", {
+                    required: "Department is required",
+                  })}
+                  className="w-full bg-transparent border-2 border-blue-500 text-white font-bold rounded-xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select Department
+                  </option>
+                  {departments.map((dept) => (
+                    <option
+                      className="bg-black"
+                      key={dept._id}
+                      value={dept.dname}
+                    >
+                      {dept.dname}
+                    </option>
+                  ))}
+                </select>
+                {errors.department && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.department.message}
+                  </p>
+                )}
+              </div>
             </>
           )}
 
@@ -207,7 +237,11 @@ const Register = () => {
                     Select Department
                   </option>
                   {departments.map((dept) => (
-                    <option className="bg-black" key={dept._id} value={dept.dname}>
+                    <option
+                      className="bg-black"
+                      key={dept._id}
+                      value={dept.dname}
+                    >
                       {dept.dname}
                     </option>
                   ))}
@@ -215,6 +249,37 @@ const Register = () => {
                 {errors.department && (
                   <p className="text-red-400 text-sm mt-1">
                     {errors.department.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Dropdown for Profession */}
+              <div className="relative mt-4">
+                <label
+                  htmlFor="profession"
+                  className="block mb-2 text-sm font-semibold text-white"
+                >
+                  Profession
+                </label>
+                <select
+                  id="profession"
+                  {...register("profession", {
+                    required: "Profession is required",
+                  })}
+                  className="w-full bg-transparent border-2 border-blue-500 text-white font-bold rounded-xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+                  defaultValue=""
+                >
+                  <option value="" className="bg-black" disabled>
+                    Select Profession
+                  </option>
+                  <option className="bg-black text-white" value="Developer">Developer</option>
+                  <option className="bg-black text-white" value="Testing">Testing</option>
+                  <option className="bg-black text-white" value="HR">HR</option>
+                  <option className="bg-black text-white" value="Other">Other</option>
+                </select>
+                {errors.profession && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.profession.message}
                   </p>
                 )}
               </div>
