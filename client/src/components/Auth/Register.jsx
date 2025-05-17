@@ -253,6 +253,9 @@ const Register = () => {
                   <option className="bg-black text-white" value="Other">
                     Accountant
                   </option>
+                  <option className="bg-black text-white" value="Other">
+                    Senior Developer
+                  </option>
                 </select>
                 {errors.profession && (
                   <p className="text-red-400 text-sm mt-1">{errors.profession.message}</p>
