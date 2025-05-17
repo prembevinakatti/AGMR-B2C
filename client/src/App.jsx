@@ -10,16 +10,19 @@ import Dock from "./components/utils/Dock";
 import { useSelector } from "react-redux";
 import HomePage from "./components/Pages/HomePage";
 import ApplyLeavePage from "./components/Pages/ApplyLeavePage";
+import AcceptReject from "./components/Pages/AcceptReject";
 
 function App() {
   const { authUser } = useSelector((store) => store.auth);
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar />
       <AppRoutes />
       {authUser && <Dock />}
-      
+       */
+       }
+       <AcceptReject/>
     </>
   );
 }
