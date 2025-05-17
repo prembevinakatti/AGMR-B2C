@@ -10,203 +10,191 @@ const Register = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     reset,
     formState: { errors },
   } = useForm();
 
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const role = watch("role");
 
   const onSubmit = async (data) => {
     try {
+      if (!data.role) {
+        toast.error("Please select a role");
+        return;
+      }
+
       setLoading(true);
-      console.log("Registration Data:", data);
+      console.log("Data   : ",data);
+      
       const response = await axios.post(
-        `http://localhost:3000/api/agmr/auth/register`,
+        "http://localhost:3000/api/agmr/auth/register",
         data,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
       if (response.data.success) {
-        navigate("/login");
         toast.success(response.data.message);
+        navigate("/login");
+        reset();
       }
-      console.log("Registration Response:", response.data);
-      reset();
     } catch (err) {
-      toast.error(error.response.data.message);
-      console.error("Registration Error:", err);
+      toast.error(err.response?.data?.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#0d0d0d] overflow-hidden px-4">
-      {/* Neon Animated Blobs */}
-      <motion.div
-        className="absolute w-96 h-96 bg-pink-500 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob top-10 left-10"
-        animate={{ x: [0, 20, 0], y: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob top-40 right-10"
-        animate={{ x: [0, -20, 0], y: [0, -20, 0] }}
-        transition={{
-          repeat: Infinity,
-          duration: 10,
-          ease: "easeInOut",
-          delay: 2,
-        }}
-      />
-      <motion.div
-        className="absolute w-96 h-96 bg-purple-800 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob bottom-10 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 30, 0] }}
-        transition={{
-          repeat: Infinity,
-          duration: 12,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
-
-      {/* Register Card */}
+    <div className="h-1/2 py-20 flex justify-center items-center bg-[#0d0d0d] px-4 relative">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-3xl p-10"
+        className="relative z-10 w-full max-w-xl bg-white/10 backdrop-blur-md border border-blue-500/20 shadow-2xl rounded-3xl p-10"
       >
-        <h2 className="text-4xl font-extrabold text-center text-white mb-8 tracking-wider">
-          📝 Register
+        <h2 className="text-3xl font-extrabold text-center text-white mb-8 tracking-wide">
+          📝 Register Account
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* Name Input */}
-          <div className="relative">
-            <input
-              id="name"
-              placeholder="Full Name"
-              {...register("name", { required: "Full name is required" })}
-              className={`peer w-full bg-transparent border-2 ${
-                errors.name ? "border-red-500" : "border-blue-500"
-              } text-white font-bold rounded-xl px-5 pt-6 pb-2 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white transition-all`}
-            />
-            <label
-              htmlFor="name"
-              className="absolute left-5 top-2 text-sm text-white font-semibold transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
-            >
-              Full Name
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <InputField
+            id="name"
+            label="Full Name"
+            register={register}
+            errors={errors}
+            required
+          />
+
+          <InputField
+            id="email"
+            type="email"
+            label="Email Address"
+            register={register}
+            errors={errors}
+            required
+            pattern={{
+              value: /^\S+@\S+\.\S+$/,
+              message: "Enter a valid email address",
+            }}
+          />
+
+          <InputField
+            id="password"
+            type="password"
+            label="Password"
+            register={register}
+            errors={errors}
+            required
+            minLength={{
+              value: 6,
+              message: "Password must be at least 6 characters",
+            }}
+          />
+
+          <InputField
+            id="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            register={register}
+            errors={errors}
+            required
+            validate={(value) =>
+              value === watch("password") || "Passwords do not match"
+            }
+          />
+
+          {/* Role Checkboxes */}
+          {/* Role Checkboxes */}
+          <div>
+            <label className="block text-white text-sm font-semibold mb-2">
+              Select Role
             </label>
-            {errors.name && (
-              <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 text-white font-medium">
+                <input
+                  type="checkbox"
+                  value="Manager"
+                  checked={role === "Manager"}
+                  onChange={() =>
+                    setValue("role", role === "Manager" ? "" : "Manager")
+                  }
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                />
+                Manager
+              </label>
+              <label className="flex items-center gap-2 text-white font-medium">
+                <input
+                  type="checkbox"
+                  value="Employee"
+                  checked={role === "Employee"}
+                  onChange={() =>
+                    setValue("role", role === "Employee" ? "" : "Employee")
+                  }
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                />
+                Employee
+              </label>
+            </div>
+            {(!role || errors.role) && (
+              <p className="text-red-400 text-sm mt-1">Role is required</p>
             )}
           </div>
 
-          {/* Email Input */}
-          <div className="relative">
-            <input
-              id="email"
-              type="email"
-              placeholder="Email Address"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Enter a valid email address",
-                },
-              })}
-              className={`peer w-full bg-transparent border-2 ${
-                errors.email ? "border-red-500" : "border-blue-500"
-              } text-white font-bold rounded-xl px-5 pt-6 pb-2 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white transition-all`}
-            />
-            <label
-              htmlFor="email"
-              className="absolute left-5 top-2 text-sm text-white font-semibold transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
-            >
-              Email Address
-            </label>
-            {errors.email && (
-              <p className="text-red-400 text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+          {/* Conditional Fields Based on Role */}
+          {role === "Manager" && (
+            <>
+              <InputField
+                id="managerNo"
+                label="Manager Number"
+                register={register}
+                errors={errors}
+                required
+              />
+              <InputField
+                id="department"
+                label="Department"
+                register={register}
+                errors={errors}
+                required
+              />
+            </>
+          )}
 
-          {/* Password Input */}
-          <div className="relative">
-            <input
-              id="password"
-              type="password"
-              placeholder="Password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              })}
-              className={`peer w-full bg-transparent border-2 ${
-                errors.password ? "border-red-500" : "border-blue-500"
-              } text-white font-bold rounded-xl px-5 pt-6 pb-2 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white transition-all`}
-            />
-            <label
-              htmlFor="password"
-              className="absolute left-5 top-2 text-sm text-white font-semibold transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
-            >
-              Password
-            </label>
-            {errors.password && (
-              <p className="text-red-400 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+          {role === "Employee" && (
+            <>
+              <InputField
+                id="empNo"
+                label="Employee Number"
+                register={register}
+                errors={errors}
+                required
+              />
+              <InputField
+                id="department"
+                label="Department"
+                register={register}
+                errors={errors}
+                required
+              />
+            </>
+          )}
 
-          {/* Confirm Password Input */}
-          <div className="relative">
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm Password"
-              {...register("confirmPassword", {
-                required: "Please confirm your password",
-                validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
-              })}
-              className={`peer w-full bg-transparent border-2 ${
-                errors.confirmPassword ? "border-red-500" : "border-blue-500"
-              } text-white font-bold rounded-xl px-5 pt-6 pb-2 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white transition-all`}
-            />
-            <label
-              htmlFor="confirmPassword"
-              className="absolute left-5 top-2 text-sm text-white font-semibold transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
-            >
-              Confirm Password
-            </label>
-            {errors.confirmPassword && (
-              <p className="text-red-400 text-sm mt-1">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-
-          {/* Register Button with Loader */}
           <motion.button
             whileHover={{ scale: !loading ? 1.03 : 1 }}
             whileTap={{ scale: !loading ? 0.97 : 1 }}
             type="submit"
             disabled={loading}
-            className={`w-full text-lg font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white py-3 rounded-xl shadow-lg transition-all ${
+            className={`w-full text-lg font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl shadow-md transition-all ${
               loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
             }`}
           >
             {loading ? (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex justify-center items-center gap-2">
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 Registering...
               </div>
@@ -216,16 +204,52 @@ const Register = () => {
           </motion.button>
         </form>
 
-        {/* Sign In Link */}
         <div className="text-center mt-6 text-sm text-gray-300 font-semibold">
           Already have an account?{" "}
           <a href="/login" className="text-blue-400 underline hover:underline">
-            LogIn
+            Log In
           </a>
         </div>
       </motion.div>
     </div>
   );
 };
+
+// Reusable Input Field Component
+const InputField = ({
+  id,
+  label,
+  type = "text",
+  register,
+  errors,
+  required = false,
+  pattern,
+  minLength,
+  validate,
+}) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={type}
+      placeholder={label}
+      {...register(id, {
+        required: required && `${label} is required`,
+        pattern,
+        minLength,
+        validate,
+      })}
+      className="peer w-full bg-transparent border-2 border-blue-500 text-white font-bold rounded-xl px-5 pt-6 pb-2 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-white transition-all"
+    />
+    <label
+      htmlFor={id}
+      className="absolute left-5 top-2 text-sm text-white font-semibold transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
+    >
+      {label}
+    </label>
+    {errors[id] && (
+      <p className="text-red-400 text-sm mt-1">{errors[id].message}</p>
+    )}
+  </div>
+);
 
 export default Register;

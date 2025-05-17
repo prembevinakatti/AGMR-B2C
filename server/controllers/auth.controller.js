@@ -2,14 +2,32 @@ const authModel = require("../models/auth.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+
 module.exports.register = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const {
+      name,
+      email,
+      password,
+      confirmPassword,
+      role,
+      department,
+      empNo,
+      mgrNo,
+    } = req.body;
 
-    if (!name || !email || !password || !confirmPassword) {
+    // Check required fields
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role ||
+      !department
+    ) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All required fields must be filled",
       });
     }
 
@@ -20,30 +38,62 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    const user = await authModel.findOne({ email });
-    if (user) {
+    // Role-specific validations
+    if (role === "Manager" && !mgrNo) {
+      return res.status(400).json({
+        success: false,
+        message: "Manager Number is required for Manager role",
+      });
+    }
+
+    if (role === "Employee" && !empNo) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee Number is required for Employee role",
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await authModel.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User already exists",
       });
     }
 
+    // Create user based on role
     const newUser = await authModel.create({
       name,
       email,
       password,
+      role,
+      department,
+      empNo: role === "Employee" ? empNo : undefined,
+      mgrNo: role === "Manager" ? mgrNo : undefined,
     });
 
-    const token = jwt.sign({ user: newUser }, process.env.JWT_TOKEN, {
+    // Generate token
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_TOKEN, {
       expiresIn: "7d",
     });
 
-    res.cookie("token", token, {});
+    // Send cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: newUser,
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
     });
   } catch (error) {
     console.error("Error registering user in server:", error.message);
@@ -150,7 +200,6 @@ module.exports.getUser = async (req, res) => {
     });
   }
 };
-
 
 module.exports.updateUser = async (req, res) => {
   try {

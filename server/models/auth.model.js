@@ -15,6 +15,21 @@ const authSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    empNo: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["Manager", "Employee"],
+      required: true,
+    },
+    department: {
+      type: String,
+      required: true,
+    },
+    mgrNo: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
