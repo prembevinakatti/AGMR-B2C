@@ -4,6 +4,7 @@ import Login from "../Auth/Login";
 import Register from "../Auth/Register";
 import HomePage from "../Pages/HomePage";
 import ProfilePage from "../Pages/ProfilePage";
+import ApplyLeavePage from "../Pages/ApplyLeavePage";
 
 const AppRoutes = () => (
   <Routes>
@@ -12,6 +13,7 @@ const AppRoutes = () => (
     <Route path="/register" element={<Register />} />
     <Route path="/home" element={<HomePage />} />
     <Route path="/profile" element={<ProfilePage />} />
+    <Route path="/apply-leave" element={<ApplyLeavePage />} />
   </Routes>
 );
 

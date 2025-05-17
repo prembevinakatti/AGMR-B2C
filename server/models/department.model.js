@@ -7,9 +7,10 @@ const departmentSchema = new mongoose.Schema({
   },
   dHead: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Manager",
+    ref: "Auth",
     required: true,
   },
+
   Demployee: [
     {
       type: mongoose.Schema.Types.ObjectId,

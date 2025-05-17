@@ -23,6 +23,10 @@ const authSchema = new mongoose.Schema(
       enum: ["Manager", "Employee"],
       required: true,
     },
+    numberOfLeaves: {
+      type: Number,
+      default: 21,
+    },
     department: {
       type: String,
       required: true,

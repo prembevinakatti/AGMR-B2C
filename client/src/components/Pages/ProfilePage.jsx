@@ -6,18 +6,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const ProfilePage = () => {
-  const initialUser = {
-    name: "Onkar Deshmukh",
-    email: "onkar@example.com",
-    role: "Developer",
-    bio: "Blockchain enthusiast building secure, decentralized apps for the future.",
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  };
-
-  const [user, setUser] = useState(initialUser);
-  const [editedUser, setEditedUser] = useState(initialUser);
+  const userProfile = useGetUserProfile();
+  const [user, setUser] = useState(userProfile);
+  const [editedUser, setEditedUser] = useState(userProfile);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e) => {
@@ -52,7 +43,7 @@ const ProfilePage = () => {
       setIsModalOpen(false);
       window.location.reload();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || error.message);
       console.log("Error Updating user : ", error.message);
     }
   };
@@ -62,10 +53,8 @@ const ProfilePage = () => {
     setIsModalOpen(false);
   };
 
-  const userProfile = useGetUserProfile();
-
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black px-4 sm:px-6 overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black px-4 sm:px-6 overflow-hidden">
       {/* Neon Blobs for main page */}
       <motion.div
         className="absolute w-80 h-80 bg-pink-500 rounded-full filter blur-3xl opacity-40 top-10 left-10"
@@ -88,41 +77,51 @@ const ProfilePage = () => {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="z-10 w-full max-w-xl bg-gray-900/60 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 text-white"
+        className="z-10 w-full max-w-xl bg-gray-900/60 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 text-white flex flex-col items-center text-center"
       >
-        <div className="flex flex-col items-center text-center">
-          <UserCircle2 className="w-24 h-24 text-blue-400 drop-shadow-[0_0_10px_#3b82f6]" />
-          <h2 className="text-3xl font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 drop-shadow-[0_0_10px_rgba(255,0,255,0.6)]">
-            {userProfile?.name}
-          </h2>
-          <p className="flex items-center gap-1 mt-2 text-sm text-gray-300">
-            <Mail className="w-4 h-4 text-pink-400" />
-            {userProfile?.email}
-          </p>
-          <p className="flex items-center gap-1 text-sm text-purple-400 mt-1">
-            <BadgeCheck className="w-4 h-4" />
-            {user.role}
-          </p>
-          <p className="mt-4 text-sm text-gray-400 leading-relaxed px-2">
-            {user.bio}
-          </p>
+        <UserCircle2 className="w-24 h-24 text-blue-400 drop-shadow-[0_0_10px_#3b82f6]" />
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsModalOpen(true)}
-            className="mt-6 px-6 py-2 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-500 shadow-lg font-semibold transition hover:opacity-90"
-          >
-            Edit Profile
-          </motion.button>
+        <h2 className="text-3xl font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 drop-shadow-[0_0_10px_rgba(255,0,255,0.6)]">
+          {userProfile?.name}
+        </h2>
+
+        <div className="mt-4 text-sm text-gray-300 flex flex-col gap-1">
+          <p className="flex items-center gap-2 justify-center">
+            <Mail className="w-4 h-4 text-pink-400" /> {userProfile?.email}
+          </p>
+          <p className="flex items-center gap-2 justify-center">
+            <BadgeCheck className="w-4 h-4 text-purple-400" />{" "}
+            {userProfile?.role}
+          </p>
+          <p className="flex items-center gap-2 justify-center">
+            <span className="text-blue-400 font-medium">No Of Leaves:</span>{" "}
+            {userProfile?.numberOfLeaves ?? "N/A"}
+          </p>
+          <p className="flex items-center gap-2 justify-center">
+            <span className="text-blue-400 font-medium">Department:</span>{" "}
+            {userProfile?.department ?? "N/A"}
+          </p>
+          <p className="flex items-center gap-2 justify-center">
+            <span className="text-blue-400 font-medium">Employee No:</span>{" "}
+            {(userProfile?.empNo ?? "N/A") || (userProfile?.mgrNo ?? "N/A")}
+          </p>
         </div>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsModalOpen(true)}
+          className="mt-6 px-6 py-2 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-blue-500 shadow-lg font-semibold transition hover:opacity-90"
+        >
+          Edit Profile
+        </motion.button>
       </motion.div>
 
       {/* Edit Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -164,23 +163,23 @@ const ProfilePage = () => {
                 <input
                   type="text"
                   name="name"
-                  // value={editedUser.name}
+                  value={editedUser.name || ""}
                   onChange={handleChange}
-                  placeholder={userProfile?.name}
+                  placeholder="Name"
                   className="bg-black/30 border border-blue-500 text-white placeholder-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-60 transition shadow-md"
                 />
                 <input
                   type="email"
                   name="email"
-                  // value={editedUser.email}
+                  value={editedUser.email || ""}
                   onChange={handleChange}
-                  placeholder={userProfile?.email}
+                  placeholder="Email"
                   className="bg-black/30 border border-blue-500 text-white placeholder-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-60 transition shadow-md"
                 />
                 <input
                   type="password"
                   name="currentPassword"
-                  // value={editedUser.currentPassword || ""}
+                  value={editedUser.currentPassword || ""}
                   onChange={handleChange}
                   placeholder="Current Password"
                   className="bg-black/30 border border-blue-500 text-white placeholder-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-60 transition shadow-md"
@@ -188,7 +187,7 @@ const ProfilePage = () => {
                 <input
                   type="password"
                   name="newPassword"
-                  // value={editedUser.newPassword || ""}
+                  value={editedUser.newPassword || ""}
                   onChange={handleChange}
                   placeholder="New Password"
                   className="bg-black/30 border border-blue-500 text-white placeholder-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-60 transition shadow-md"
@@ -196,7 +195,7 @@ const ProfilePage = () => {
                 <input
                   type="password"
                   name="confirmNewPassword"
-                  // value={editedUser.confirmNewPassword || ""}
+                  value={editedUser.confirmNewPassword || ""}
                   onChange={handleChange}
                   placeholder="Confirm New Password"
                   className="bg-black/30 border border-blue-500 text-white placeholder-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-60 transition shadow-md"
@@ -211,9 +210,7 @@ const ProfilePage = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    handleSave();
-                  }}
+                  onClick={handleSave}
                   className="px-4 py-2 rounded-md bg-gradient-to-r from-green-400 to-emerald-600 font-semibold hover:opacity-90"
                 >
                   Save

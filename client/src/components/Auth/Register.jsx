@@ -155,9 +155,7 @@ const Register = () => {
                 Employee
               </label>
             </div>
-            {(!role || errors.role) && (
-              <p className="text-red-400 text-sm mt-1">Role is required</p>
-            )}
+            
           </div>
 
           {/* Conditional Fields Based on Role */}
@@ -209,7 +207,7 @@ const Register = () => {
                     Select Department
                   </option>
                   {departments.map((dept) => (
-                    <option key={dept._id} value={dept.dname}>
+                    <option className="bg-black" key={dept._id} value={dept.dname}>
                       {dept.dname}
                     </option>
                   ))}

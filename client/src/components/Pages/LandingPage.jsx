@@ -39,7 +39,7 @@ const LandingPage = () => {
           <br />
           <span className="text-white">
             <Typewriter
-              words={["NeonChain", "MediVault", "BlockHealth", "SafeRecords"]}
+              words={["SmartLeave", "Happy Hours,Happy Team", "Leave Smart, Work Happy", "Manage Leave Effortlessly"]}
               loop={0} // Infinite loop
               cursor
               cursorStyle="_"

@@ -1,16 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const { authUser } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
 
   const role = authUser?.role; // safely extract role
   const isManager = role === "Manager"; // match with schema value (case-sensitive)
 
-  const headingText = isManager
-    ? "Welcome Manager"
-    : "Welcome Employee";
+  const headingText = isManager ? "Welcome Manager" : "Welcome Employee";
 
   const subText = isManager
     ? "Manage employee leave requests and view team attendance seamlessly."
@@ -44,7 +44,10 @@ const HomePage = () => {
       >
         {!isManager && (
           <>
-            <button className="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg">
+            <button
+              onClick={() => navigate("/apply-leave")}
+              className="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg"
+            >
               Apply for Leave
             </button>
             <button className="px-8 py-3 border border-blue-500 text-blue-400 rounded-xl font-bold hover:bg-blue-500 hover:text-white transition-all shadow-md">
