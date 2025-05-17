@@ -248,10 +248,10 @@ const Register = () => {
                     Testing
                   </option>
                   <option className="bg-black text-white" value="HR">
-                    HR
+                    R&D
                   </option>
                   <option className="bg-black text-white" value="Other">
-                    Other
+                    Accountant
                   </option>
                 </select>
                 {errors.profession && (
