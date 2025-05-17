@@ -8,15 +8,19 @@ import AppRoutes from "./components/Routes/AppRouter";
 import Navbar from "./components/utils/Navbar";
 import Dock from "./components/utils/Dock";
 import { useSelector } from "react-redux";
+import HomePage from "./components/Pages/HomePage";
+import ApplyLeavePage from "./components/Pages/ApplyLeavePage";
 
 function App() {
   const { authUser } = useSelector((store) => store.auth);
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar />
       <AppRoutes />
-      {authUser && <Dock />}
+      {authUser && <Dock />} */}
+      {/* <HomePage role={"manager"} /> */}
+      <ApplyLeavePage/>
     </>
   );
 }
