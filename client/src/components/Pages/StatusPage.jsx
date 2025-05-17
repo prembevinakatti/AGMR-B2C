@@ -10,7 +10,7 @@ const StatusPage = () => {
 
   // Simulated manager details (replace with real source)
   const manager = {
-    department: "HR",
+    department: ["HR","Marketing","Production"],
   };
 
   console.log("All Requests : ", allRequests);
