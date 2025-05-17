@@ -16,11 +16,10 @@ function App() {
 
   return (
     <>
-      {/* <Navbar />
+      <Navbar />
       <AppRoutes />
-      {authUser && <Dock />} */}
-      {/* <HomePage role={"manager"} /> */}
-      <ApplyLeavePage/>
+      {authUser && <Dock />}
+      
     </>
   );
 }

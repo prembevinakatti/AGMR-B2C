@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -17,7 +17,22 @@ const Register = () => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [departments, setDepartments] = useState([]);
   const role = watch("role");
+
+  // Fetch departments on component mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/agmr/departments/getDepartNames");
+        setDepartments(res.data.departments || []); // assuming API returns { departments: [...] }
+      } catch (error) {
+        console.error("Failed to fetch departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -27,8 +42,8 @@ const Register = () => {
       }
 
       setLoading(true);
-      console.log("Data   : ",data);
-      
+      console.log("Data   : ", data);
+
       const response = await axios.post(
         "http://localhost:3000/api/agmr/auth/register",
         data,
@@ -62,6 +77,7 @@ const Register = () => {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Other fields */}
           <InputField
             id="name"
             label="Full Name"
@@ -109,7 +125,6 @@ const Register = () => {
           />
 
           {/* Role Checkboxes */}
-          {/* Role Checkboxes */}
           <div>
             <label className="block text-white text-sm font-semibold mb-2">
               Select Role
@@ -149,7 +164,7 @@ const Register = () => {
           {role === "Manager" && (
             <>
               <InputField
-                id="managerNo"
+                id="mgrNo"
                 label="Manager Number"
                 register={register}
                 errors={errors}
@@ -174,13 +189,37 @@ const Register = () => {
                 errors={errors}
                 required
               />
-              <InputField
-                id="department"
-                label="Department"
-                register={register}
-                errors={errors}
-                required
-              />
+              {/* Dropdown for Department */}
+              <div className="relative">
+                <label
+                  htmlFor="department"
+                  className="block mb-2 text-sm font-semibold text-white"
+                >
+                  Department
+                </label>
+                <select
+                  id="department"
+                  {...register("department", {
+                    required: "Department is required",
+                  })}
+                  className="w-full bg-transparent border-2 border-blue-500 text-white font-bold rounded-xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select Department
+                  </option>
+                  {departments.map((dept) => (
+                    <option key={dept._id} value={dept.dname}>
+                      {dept.dname}
+                    </option>
+                  ))}
+                </select>
+                {errors.department && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.department.message}
+                  </p>
+                )}
+              </div>
             </>
           )}
 

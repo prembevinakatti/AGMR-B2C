@@ -1,7 +1,7 @@
 const authModel = require("../models/auth.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-
+const Department = require("../models/department.model");
 
 module.exports.register = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ module.exports.register = async (req, res) => {
       mgrNo,
     } = req.body;
 
-    // Check required fields
+    // Validate required fields
     if (
       !name ||
       !email ||
@@ -38,7 +38,6 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    // Role-specific validations
     if (role === "Manager" && !mgrNo) {
       return res.status(400).json({
         success: false,
@@ -53,7 +52,6 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    // Check if user already exists
     const existingUser = await authModel.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -62,7 +60,19 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    // Create user based on role
+    // 🧩 Check if department exists for Employee
+    let existingDepartment = null;
+    if (role === "Employee") {
+      existingDepartment = await Department.findOne({ dname: department });
+      if (!existingDepartment) {
+        return res.status(400).json({
+          success: false,
+          message: "Department does not exist. Please contact your manager.",
+        });
+      }
+    }
+
+    // Create user
     const newUser = await authModel.create({
       name,
       email,
@@ -73,16 +83,30 @@ module.exports.register = async (req, res) => {
       mgrNo: role === "Manager" ? mgrNo : undefined,
     });
 
-    // Generate token
+    // 🧑‍💼 If Manager, create new department
+    if (role === "Manager") {
+      await Department.create({
+        dname: department,
+        dHead: newUser._id,
+        Demployee: [],
+      });
+    }
+
+    // 👨‍💻 If Employee, add to existing department
+    if (role === "Employee" && existingDepartment) {
+      existingDepartment.Demployee.push(newUser._id);
+      await existingDepartment.save();
+    }
+
+    // JWT Token
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_TOKEN, {
       expiresIn: "7d",
     });
 
-    // Send cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(201).json({

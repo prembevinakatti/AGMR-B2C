@@ -2,6 +2,7 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const connectDB = require("./config/database.config");
 const authRoute = require("./routes/auth.route");
+const departmentRoute = require("./routes/department.route");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -18,6 +19,7 @@ const corsOption = {
 app.use(cors(corsOption));
 
 app.use("/api/agmr/auth", authRoute);
+app.use("/api/agmr/departments", departmentRoute);
 
 const PORT = process.env.PORT || 5000;
 
