@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import useGetAllRequests from "@/hooks/useGetAllRequests";
+import useGetUserRequests from "@/hooks/useGetUserRequests";
 
 const tabs = ["All", "Pending", "Approved", "Rejected"];
 
 const EmployeeStatusPage = () => {
-  const employeeRequests = useGetAllRequests();
+  const employeeRequests = useGetUserRequests();
   const [activeTab, setActiveTab] = useState("All");
 
   const filteredData =

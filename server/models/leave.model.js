@@ -9,7 +9,7 @@ const empSchema = new mongoose.Schema({
   leaveType: {
     type: String,
     required: true,
-    enum: ["Casual", "Bereavement", "Sick", "Marriage","Maternity", "Study"],
+    enum: ["Casual", "Bereavement", "Sick", "Earned","Maternity", "Study"],
   },
   fromDate: {
     type: Date,
