@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserCircle2, Mail, BadgeCheck, X } from "lucide-react";
 import useGetUserProfile from "@/hooks/useGetUserProfile";
@@ -7,9 +7,27 @@ import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const userProfile = useGetUserProfile();
-  const [user, setUser] = useState(userProfile);
-  const [editedUser, setEditedUser] = useState(userProfile);
+
+  const [user, setUser] = useState(null);
+  const [editedUser, setEditedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Update state when userProfile is loaded or changes
+  useEffect(() => {
+    if (userProfile) {
+      setUser(userProfile);
+      setEditedUser(userProfile);
+    }
+  }, [userProfile]);
+
+  // Show loading until user data is ready
+  if (!user || !editedUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Loading...
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setEditedUser({ ...editedUser, [e.target.name]: e.target.value });
@@ -82,29 +100,28 @@ const ProfilePage = () => {
         <UserCircle2 className="w-24 h-24 text-blue-400 drop-shadow-[0_0_10px_#3b82f6]" />
 
         <h2 className="text-3xl font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 drop-shadow-[0_0_10px_rgba(255,0,255,0.6)]">
-          {userProfile?.name}
+          {user.name}
         </h2>
 
         <div className="mt-4 text-sm text-gray-300 flex flex-col gap-1">
           <p className="flex items-center gap-2 justify-center">
-            <Mail className="w-4 h-4 text-pink-400" /> {userProfile?.email}
+            <Mail className="w-4 h-4 text-pink-400" /> {user.email}
           </p>
           <p className="flex items-center gap-2 justify-center">
-            <BadgeCheck className="w-4 h-4 text-purple-400" />{" "}
-            {userProfile?.role}
+            <BadgeCheck className="w-4 h-4 text-purple-400" /> {user.role}
           </p>
           <p className="flex items-center gap-2 justify-center">
             <span className="text-blue-400 font-medium">No Of Leaves:</span>{" "}
-            {userProfile?.numberOfLeaves ?? "N/A"}
+            {user.numberOfLeaves ?? "N/A"}
           </p>
           <p className="flex items-center gap-2 justify-center">
             <span className="text-blue-400 font-medium">Department:</span>{" "}
-            {userProfile?.department ?? "N/A"}
+            {user.department ?? "N/A"}
           </p>
-          <p className="flex items-center gap-2 justify-center">
+          {/* <p className="flex items-center gap-2 justify-center">
             <span className="text-blue-400 font-medium">Employee No:</span>{" "}
-            {(userProfile?.empNo ?? "N/A") || (userProfile?.mgrNo ?? "N/A")}
-          </p>
+            {(user.empNo ?? "N/A") || (user.mgrNo ?? "N/A")}
+          </p> */}
         </div>
 
         <motion.button

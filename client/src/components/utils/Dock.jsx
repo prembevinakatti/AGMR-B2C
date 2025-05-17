@@ -14,13 +14,13 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
 
+// Updated icons array: Removed "Projects", added "Apply Leave"
 const icons = [
   { name: "Home", icon: Home, path: "/home" },
-  { name: "Projects", icon: Briefcase, path: "/projects" },
+  { name: "Apply Leave", icon: Briefcase, path: "/apply-leave" },
   { name: "Messages", icon: MessagesSquare, path: "/messages" },
   { name: "Profile", icon: UserCircle, path: "/profile" },
 ];
-
 
 const Dock = () => {
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const Dock = () => {
         </div>
         <button
           onClick={handleLogout}
-          className="text-red-500 p-2  rounded-full border border-red-500 hover:scale-125 transition-transform duration-300"
+          className="text-red-500 p-2 rounded-full border border-red-500 hover:scale-125 transition-transform duration-300"
         >
           <LogOut size={28} strokeWidth={1.8} />
         </button>

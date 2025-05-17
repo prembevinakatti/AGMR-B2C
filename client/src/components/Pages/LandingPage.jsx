@@ -35,11 +35,15 @@ const LandingPage = () => {
         className="z-10 text-center max-w-2xl"
       >
         <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 mb-6 drop-shadow-lg tracking-wide">
-          Welcome to{" "}
-          <br />
+          Welcome to <br />
           <span className="text-white">
             <Typewriter
-              words={["SmartLeave", "Happy Hours,Happy Team", "Leave Smart, Work Happy", "Manage Leave Effortlessly"]}
+              words={[
+                "SmartLeave",
+                "Happy Hours,Happy Team",
+                "Leave Smart, Work Happy",
+                "Manage Leave Effortlessly",
+              ]}
               loop={0} // Infinite loop
               cursor
               cursorStyle="_"
@@ -50,8 +54,8 @@ const LandingPage = () => {
           </span>
         </h1>
         <p className="text-gray-300 text-lg md:text-xl mb-10">
-          Explore the future of secure health record management with blockchain
-          and privacy-first technology.
+          A Web-based application that simplifies the leave management process
+          for employees.
         </p>
 
         {/* Buttons */}

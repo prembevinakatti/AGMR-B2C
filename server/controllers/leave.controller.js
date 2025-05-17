@@ -2,6 +2,7 @@ const Leave = require("../models/leave.model");
 const Auth = require("../models/auth.model");
 const Department = require("../models/department.model");
 const transporter = require("../services/emailServices");
+const leaveReuqestModel = require("../models/leaveReuqest.model");
 
 module.exports.applyLeave = async (req, res) => {
   try {
@@ -74,13 +75,23 @@ HR System
 
     await transporter.sendMail(mailOptions);
 
-    return res
-      .status(201)
-      .json({
-        message: "Leave applied and notification sent successfully.",
-        success: true,
-        leave: leave,
-      });
+    const request = await leaveReuqestModel.create({
+      mgrId: manager._id,
+      empId: employee._id,
+      status: "Pending",
+    });
+
+    if (!request) {
+      return res
+        .status(500)
+        .json({ message: "Error while creating leave request." });
+    }
+
+    return res.status(201).json({
+      message: "Leave applied and notification sent successfully.",
+      success: true,
+      leave: leave,
+    });
   } catch (error) {
     console.error("Error in applyLeave:", error);
     return res
