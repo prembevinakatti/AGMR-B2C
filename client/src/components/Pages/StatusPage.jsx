@@ -8,12 +8,22 @@ const StatusPage = () => {
   const [activeTab, setActiveTab] = useState("All");
   const allRequests = useGetAllRequests();
 
+  // Simulated manager details (replace with real source)
+  const manager = {
+    department: "HR",
+  };
+
   console.log("All Requests : ", allRequests);
+
+  // Filter requests where employee's department matches manager's department
+  const sameDeptRequests = allRequests.filter(
+    (item) => item.empId.department === manager.department
+  );
 
   const filteredData =
     activeTab === "All"
-      ? allRequests
-      : allRequests.filter((item) => item.status === activeTab);
+      ? sameDeptRequests
+      : sameDeptRequests.filter((item) => item.status === activeTab);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
