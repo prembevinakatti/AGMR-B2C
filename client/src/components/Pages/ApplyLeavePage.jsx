@@ -76,12 +76,10 @@ const ApplyLeavePage = () => {
               className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
               <option value="">Select a type</option>
-              <option value="Casual">Casual</option>
-              <option value="Sick">Sick</option>
-              <option value="Marriage">Marriage</option>
-              <option value="Bereavement">Bereavement</option>
-              <option value="Maternity">Maternity</option>
-              <option value="Study">Study</option>
+              <option value="Casual">CL</option>
+              <option value="Sick">SL</option>
+              <option value="Maternity">ML</option>
+              <option value="Earned">EL</option>
             </select>
           </div>
 

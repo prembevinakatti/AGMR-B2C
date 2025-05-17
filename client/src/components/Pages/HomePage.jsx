@@ -50,7 +50,7 @@ const HomePage = () => {
             >
               Apply for Leave
             </button>
-            <button className="px-8 py-3 border border-blue-500 text-blue-400 rounded-xl font-bold hover:bg-blue-500 hover:text-white transition-all shadow-md">
+            <button onClick={() => navigate("/employee-status")} className="px-8 py-3 border border-blue-500 text-blue-400 rounded-xl font-bold hover:bg-blue-500 hover:text-white transition-all shadow-md">
               My Leave Status
             </button>
           </>

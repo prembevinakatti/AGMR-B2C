@@ -94,7 +94,9 @@ module.exports.acceptORrejectRequest = async (req, res) => {
       console.error("Error sending email notification:", emailError);
     }
 
-    return res.status(200).json({ message: `Leave Request ${newStatus}` });
+    return res
+      .status(200)
+      .json({ message: `Leave Request ${newStatus}`, success: true });
   } catch (error) {
     console.error("Error accepting or rejecting request:", error.message);
     return res.status(500).json({ message: "Internal Server Error" });

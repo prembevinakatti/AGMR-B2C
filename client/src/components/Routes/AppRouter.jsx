@@ -7,6 +7,7 @@ import ProfilePage from "../Pages/ProfilePage";
 import ApplyLeavePage from "../Pages/ApplyLeavePage";
 import StatusPage from "../Pages/StatusPage";
 import AcceptReject from "../Pages/AcceptReject";
+import EmployeeStatusPage from "../Pages/EmployeeStatusPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -18,6 +19,7 @@ const AppRoutes = () => (
     <Route path="/apply-leave" element={<ApplyLeavePage />} />
     <Route path="/status" element={<StatusPage />} />
     <Route path="/accept-reject" element={<AcceptReject />} />
+    <Route path="/employee-status" element={<EmployeeStatusPage />} />
   </Routes>
 );
 

@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import useGetAllRequests from "@/hooks/useGetAllRequests";
 
-const employeeLeaves = [
-  { id: 1, date: '2025-05-10', reason: 'Medical', status: 'Pending' },
-  { id: 2, date: '2025-05-12', reason: 'Family Event', status: 'Approved' },
-  { id: 3, date: '2025-05-14', reason: 'Travel', status: 'Rejected' },
-  { id: 4, date: '2025-05-16', reason: 'Medical', status: 'Pending' },
-];
-
-const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
+const tabs = ["All", "Pending", "Approved", "Rejected"];
 
 const EmployeeStatusPage = () => {
-  const [activeTab, setActiveTab] = useState('All');
+  const employeeRequests = useGetAllRequests();
+  const [activeTab, setActiveTab] = useState("All");
 
   const filteredData =
-    activeTab === 'All'
-      ? employeeLeaves
-      : employeeLeaves.filter((item) => item.status === activeTab);
+    activeTab === "All"
+      ? employeeRequests
+      : employeeRequests.filter((item) => item.status === activeTab);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
@@ -32,8 +27,8 @@ const EmployeeStatusPage = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 rounded-full font-semibold text-sm transition-all shadow-md border ${
               activeTab === tab
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-pink-400'
-                : 'bg-black text-gray-300 hover:bg-gray-800 border-gray-700'
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-pink-400"
+                : "bg-black text-gray-300 hover:bg-gray-800 border-gray-700"
             }`}
           >
             {tab}
@@ -52,8 +47,8 @@ const EmployeeStatusPage = () => {
           <thead>
             <tr className="text-left text-sm text-gray-300 border-b border-gray-600">
               <th className="p-3">ID</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Reason</th>
+              <th className="p-3">From Date</th>
+              <th className="p-3">To Date</th>
               <th className="p-3">Status</th>
             </tr>
           </thead>
@@ -64,17 +59,29 @@ const EmployeeStatusPage = () => {
                   key={item.id}
                   className="border-t border-gray-700 hover:bg-gray-800 transition"
                 >
-                  <td className="p-3">{item.id}</td>
-                  <td className="p-3">{item.date}</td>
-                  <td className="p-3">{item.reason}</td>
+                  <td className="p-3">{item.empId.empNo}</td>
+                  <td className="p-3">
+                    {new Date(item.leaveId.fromDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td className="p-3">
+                    {new Date(item.leaveId.toDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
                   <td className="p-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold shadow-md ${
-                        item.status === 'Approved'
-                          ? 'bg-green-500 text-black'
-                          : item.status === 'Rejected'
-                          ? 'bg-red-500 text-black'
-                          : 'bg-yellow-400 text-black'
+                        item.status === "Approved"
+                          ? "bg-green-500 text-black"
+                          : item.status === "Rejected"
+                          ? "bg-red-500 text-black"
+                          : "bg-yellow-400 text-black"
                       }`}
                     >
                       {item.status}
