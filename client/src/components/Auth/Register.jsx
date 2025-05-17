@@ -170,41 +170,14 @@ const Register = () => {
                 errors={errors}
                 required
               />
-              {/* Department dropdown for Manager */}
-              <div className="relative">
-                <label
-                  htmlFor="department"
-                  className="block mb-2 text-sm font-semibold text-white"
-                >
-                  Department
-                </label>
-                <select
-                  id="department"
-                  {...register("department", {
-                    required: "Department is required",
-                  })}
-                  className="w-full bg-transparent border-2 border-blue-500 text-white font-bold rounded-xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-white"
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    Select Department
-                  </option>
-                  {departments.map((dept) => (
-                    <option
-                      className="bg-black"
-                      key={dept._id}
-                      value={dept.dname}
-                    >
-                      {dept.dname}
-                    </option>
-                  ))}
-                </select>
-                {errors.department && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.department.message}
-                  </p>
-                )}
-              </div>
+              {/* Department text input for Manager */}
+              <InputField
+                id="department"
+                label="Department"
+                register={register}
+                errors={errors}
+                required
+              />
             </>
           )}
 
@@ -217,7 +190,7 @@ const Register = () => {
                 errors={errors}
                 required
               />
-              {/* Dropdown for Department */}
+              {/* Department dropdown for Employee */}
               <div className="relative">
                 <label
                   htmlFor="department"
@@ -237,11 +210,7 @@ const Register = () => {
                     Select Department
                   </option>
                   {departments.map((dept) => (
-                    <option
-                      className="bg-black"
-                      key={dept._id}
-                      value={dept.dname}
-                    >
+                    <option className="bg-black" key={dept._id} value={dept.dname}>
                       {dept.dname}
                     </option>
                   ))}
@@ -272,15 +241,21 @@ const Register = () => {
                   <option value="" className="bg-black" disabled>
                     Select Profession
                   </option>
-                  <option className="bg-black text-white" value="Developer">Developer</option>
-                  <option className="bg-black text-white" value="Testing">Testing</option>
-                  <option className="bg-black text-white" value="HR">HR</option>
-                  <option className="bg-black text-white" value="Other">Other</option>
+                  <option className="bg-black text-white" value="Developer">
+                    Developer
+                  </option>
+                  <option className="bg-black text-white" value="Testing">
+                    Testing
+                  </option>
+                  <option className="bg-black text-white" value="HR">
+                    HR
+                  </option>
+                  <option className="bg-black text-white" value="Other">
+                    Other
+                  </option>
                 </select>
                 {errors.profession && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.profession.message}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{errors.profession.message}</p>
                 )}
               </div>
             </>
