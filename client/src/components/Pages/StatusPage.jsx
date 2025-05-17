@@ -1,23 +1,22 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import useGetAllRequests from "@/hooks/useGetAllRequests";
+import { useSelector } from "react-redux";
 
 const tabs = ["All", "Pending", "Approved", "Rejected"];
 
 const StatusPage = () => {
   const [activeTab, setActiveTab] = useState("All");
   const allRequests = useGetAllRequests();
+  const {authUser} = useSelector(store =>store.auth)
 
-  // Simulated manager details (replace with real source)
-  const manager = {
-    department: ["HR","Marketing","Production"],
-  };
+  // Simulated manager details (replace with real source
 
   console.log("All Requests : ", allRequests);
 
   // Filter requests where employee's department matches manager's department
   const sameDeptRequests = allRequests.filter(
-    (item) => item.empId.department === manager.department
+    (item) => item.empId.department === authUser.department
   );
 
   const filteredData =
