@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import useGetPendingRequests from "@/hooks/useGetPendingRequests";
 import axios from "axios";
@@ -8,8 +8,10 @@ import { useNavigate } from "react-router-dom";
 const AcceptReject = () => {
   const pendingRequests = useGetPendingRequests();
   const navigate = useNavigate();
+  const [loadingId, setLoadingId] = useState(null); // ← loader state
 
   const handleAction = async (id, action) => {
+    setLoadingId(id); // ← start loader
     try {
       const response = await axios.post(
         `http://localhost:3000/api/agmr/emp/leave/acceptOrrejectRequest`,
@@ -22,12 +24,15 @@ const AcceptReject = () => {
         }
       );
       if (response.data.success) {
-        navigate("/status")
         toast.success(response.data.message);
+        navigate("/status");
       }
       console.log("Action successful:", response.data);
     } catch (error) {
       console.error("Action failed:", error);
+      toast.error("Action failed. Please try again.");
+    } finally {
+      setLoadingId(null); // ← stop loader
     }
   };
 
@@ -94,18 +99,26 @@ const AcceptReject = () => {
                     </span>
                   </td>
                   <td className="p-3 text-center space-x-2">
-                    <button
-                      onClick={() => handleAction(item._id, "Approved")}
-                      className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleAction(item._id, "Rejected")}
-                      className="bg-red-500 hover:bg-red-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
-                    >
-                      Reject
-                    </button>
+                    {loadingId === item._id ? (
+                      <div className="text-sm text-purple-400 animate-pulse">
+                        Processing...
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleAction(item._id, "Approved")}
+                          className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleAction(item._id, "Rejected")}
+                          className="bg-red-500 hover:bg-red-600 text-black px-3 py-1 text-xs rounded-full font-semibold transition"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))
